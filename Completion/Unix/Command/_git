@@ -2251,7 +2251,7 @@ _git-config () {
     'svn-remote.*.automkdirs:attempt to recreate empty directories that are in the Subversion repository::->bool:true'
     'svn-remote.*.noMetadata:disable git-svn-id: lines at end of commits::->bool:false'
     'svn-remote.*.useSvmProps:use remappings of URLs and UUIDs from mirrors::->bool:false'
-    'svn-remote.*.useSvnsyncProps:use remappings of URLs and UUIDs for the svnsync command::->bool:false'
+    'svn-remote.*.useSvnsyncprops:use remappings of URLs and UUIDs for the svnsync command::->bool:false'
     'svn-remote.*.rewriteRoot:alternate root URL to use:root url:_urls'
     'svn-remote.*.rewriteUUID:remap URLs and UUIDs for mirrors manually::->bool:false'
     'svn-remote.*.ignore-paths:regular expression of paths to not check out:regular expression:->string'
