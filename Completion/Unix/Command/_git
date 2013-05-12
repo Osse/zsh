@@ -4974,6 +4974,7 @@ _git_commands () {
     cvsimport:'import a CVS "repository" into a git repository'
     cvsserver:'run a CVS server emulator for git'
     imap-send:'send a collection of patches to an IMAP folder'
+    p4:'import from and submit to Perforce repositories'
     quiltimport:'apply a quilt patchset'
     request-pull:'generate summary of pending changes'
     send-email:'send collection of patches as emails'
