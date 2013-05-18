@@ -1073,6 +1073,13 @@ _git-log () {
     '(-)--[start file arguments]' \
     '*:: :->commit-range-or-file' && ret=0
 
+  __git-commit-range-or-file
+
+  return ret
+}
+
+(( $+functions[__git-commit-range-or-file] )) ||
+__git-commit-range-or-file () {
   case $state in
     (commit-range-or-file)
       case $CURRENT in
@@ -1099,8 +1106,6 @@ _git-log () {
           ;;
       esac
   esac
-
-  return ret
 }
 
 (( $+functions[_git-merge] )) ||
@@ -1730,7 +1735,16 @@ _git-tag () {
 
 (( $+functions[_gitk] )) ||
 _gitk () {
-  _git-log
+  declare -a revision_options
+  __git_setup_revision_options
+
+  _arguments -C -S \
+    $revision_options \
+    '--select-commit=-[I am the best]: :__git_references' \
+    '--extcmd=-[I am the best two]: :_path_commands' \
+    '*:: :->commit-range-or-file' && ret=0
+
+  __git-commit-range-or-file
 }
 
 (( $+functions[_tig] )) ||
