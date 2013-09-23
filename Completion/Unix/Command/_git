@@ -1865,7 +1865,7 @@ _git-config () {
     core.fsyncobjectfiles:'fsync() when writing object files::->bool:false'
     core.preloadindex:'use parallel index preload for operations like git diff::->bool:false'
     core.createObject:'take steps to prevent overwriting existing objects::->core.createObject:link'
-    core.checkstat:'determine which stat fields to match between the index and work tree::->core.checkstat:default'
+    core.statinfo:'determine which stat fields to match between the index and work tree::->core.statinfo:default'
     core.notesRef:'show notes in given refs:refs:->string:refs/notes/commits'
     core.sparseCheckout:'use sparse checkout::->bool:false'
     credential.helper:'external helper to be called when a username or password credential is needed::_path_commands'
