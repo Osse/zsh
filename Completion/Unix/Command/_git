@@ -162,7 +162,7 @@ _git-archive () {
     $backend_args \
     '--remote=[archive remote repository]:remote repository:__git_any_repositories' \
     '--exec=[path to git-receive-pack on remote]:remote path:_files' \
-    ': :__git_tree_ishs' \
+    ': :__git_commits' \
     '*: :->file' && ret=0
 
   case $state in
@@ -331,9 +331,9 @@ _git-branch () {
     "($l $m $d $e)--no-track[override the branch.autosetupmerge configuration variable]" \
     "($l $m $d $e -u --set-upstream --set-upstream-to --unset-upstream)"{-u,--set-upstream-to=}"[set up configuration so that pull merges]:remote-branches:__git_remote_branch_names" \
     "($l $m $d $e -u --set-upstream --set-upstream-to --unset-upstream)--unset-upstream[remove upstream configuration]" \
-    "($l $m $d $e)--contains=[only list branches which contain the specified commit]: :__git_committishs" \
-    "($l $m $d $e)--merged=[only list branches which are fully contained by HEAD]: :__git_committishs" \
-    "($l $m $d $e)--no-merged=[do not list branches which are fully contained by HEAD]: :__git_committishs" \
+    "($l $m $d $e)--contains=[only list branches which contain the specified commit]: :__git_commits" \
+    "($l $m $d $e)--merged=[only list branches which are fully contained by HEAD]: :__git_commits" \
+    "($l $m $d $e)--no-merged=[do not list branches which are fully contained by HEAD]: :__git_commits" \
     "($c $l $m $d)--edit-description[edit branch description]" \
     $dependent_creation_args \
     "($l $c $d $m $e)"{-m,--move}"[rename a branch and the corresponding reflog]" \
@@ -419,7 +419,7 @@ _git-check-mailmap () {
 
 (( $+functions[_git-checkout] )) ||
 _git-checkout () {
-  # TODO: __git_tree_ishs is just stupid.  It should be giving us a list of tags
+  # TODO: __git_commits is just stupid.  It should be giving us a list of tags
   # and perhaps also allow all that just with ^{tree} and so on.  Not quite sure
   # how to do that, though.
   local new_branch_reflog_opt
@@ -460,7 +460,7 @@ _git-checkout () {
         # TODO: Allow A...B
         local branch_arg='branches::__git_revisions' \
               remote_branch_noprefix_arg='remote branches::__git_remote_branch_names_noprefix' \
-              tree_ish_arg='tree-ishs::__git_tree_ishs' \
+              tree_ish_arg='tree-ishs::__git_commits' \
               file_arg='modified-files::__git_modified_files'
 
         if [[ -n ${opt_args[(I)-b|-B|--orphan|--detach]} ]]; then
@@ -704,7 +704,7 @@ _git-describe () {
     '--match=[only consider tags matching glob pattern]:pattern' \
     '--always[show uniquely abbreviated commit object as fallback]' \
     '--first-parent[follow only the first parent of merge commits]' \
-    '*: :__git_committishs'
+    '*: :__git_commits'
 }
 
 (( $+functions[_git-diff] )) ||
@@ -983,11 +983,11 @@ _git-grep () {
       if (( last_tree == 0 || last_tree == end )); then
         if (( first_tree == 0 )); then
           _alternative \
-            'treeishs::__git_tree_ishs' \
+            'treeishs::__git_commits' \
             'files::__git_cached_files' && ret=0
         else
           _alternative \
-            'treeishs::__git_trees' \
+            'treeishs::__git_objects' \
             "files::__git_tree_files ${PREFIX:-.} $line[first_tree,last_tree]" && ret=0
         fi
       else
@@ -1491,7 +1491,7 @@ _git-show () {
       _alternative \
         'commits::__git_commits' \
         'tags::__git_tags' \
-        'trees::__git_trees' \
+        'trees::__git_objects' \
         'blobs::__git_blobs' && ret=0
       ;;
   esac
@@ -3383,9 +3383,9 @@ _git-instaweb () {
 (( $+functions[_git-merge-tree] )) ||
 _git-merge-tree () {
   _arguments \
-    ':base-tree:__git_tree_ishs' \
-    ':branch 1:__git_tree_ishs' \
-    ':branch 2:__git_tree_ishs'
+    ':base-tree:__git_commits' \
+    ':branch 1:__git_commits' \
+    ':branch 2:__git_commits'
 }
 
 (( $+functions[_git-rerere] )) ||
@@ -3999,7 +3999,7 @@ _git-commit-tree () {
   if (( CURRENT == 2 )); then
     _arguments \
       '-h[display usage]' \
-      ': :__git_trees'
+      ': :__git_objects'
   elif [[ $words[CURRENT-1] == -p ]]; then
     local expl
     _description commits expl 'parent commit'
@@ -4190,9 +4190,9 @@ _git-read-tree () {
     '--index-output=[write index in the named file instead of $GIT_INDEX_FILE]: :_files' \
     '--no-sparse-checkout[display sparse checkout support]' \
     '--empty[instead of reading tree object(s) into the index, just empty it]' \
-    '1:first tree-ish to be read/merged:__git_tree_ishs' \
-    '2::second tree-ish to be read/merged:__git_tree_ishs' \
-    '3::third tree-ish to be read/merged:__git_tree_ishs'
+    '1:first tree-ish to be read/merged:__git_commits' \
+    '2::second tree-ish to be read/merged:__git_commits' \
+    '3::third tree-ish to be read/merged:__git_commits'
 }
 
 (( $+functions[_git-symbolic-ref] )) ||
@@ -4321,7 +4321,7 @@ _git-diff-index () {
     $revision_options \
     '--cached[do not consider the work tree at all]' \
     '-m[flag non-checked-out files as up-to-date]' \
-    ': :__git_tree_ishs' \
+    ': :__git_commits' \
     '*: :__git_cached_files'
 }
 
@@ -4348,7 +4348,7 @@ _git-diff-tree () {
     '(-c --cc)-c[show differences from each of parents to merge result]' \
     '(-c --cc)--cc[how differences from each of parents and omit differences from only one parent]' \
     '--always[always show commit itself and commit log message]' \
-    ': :__git_tree_ishs' \
+    ': :__git_commits' \
     '*:: :->files' && ret=0
 
   case $state in
@@ -4367,7 +4367,7 @@ _git-diff-tree () {
           "new-tree-files:new tree:__git_tree_files ${PREFIX:-.} $line[2]" && ret=0
       else
         _alternative \
-          'tree-ishs::__git_tree_ishs' \
+          'tree-ishs::__git_commits' \
           "tree-files::__git_tree_files ${PREFIX:-.} $line[1]" && ret=0
       fi
       ;;
@@ -4420,7 +4420,7 @@ _git-ls-files () {
     '*--exclude-per-directory=-[skip directories matching patterns in given file]: :_files' \
     '--exclude-standard[skip files in standard Git exclusion lists]' \
     '--error-unmatch[if any file does not appear in index, treat this as an error]' \
-    '(-s --stage -u --unmerged)--with-tree=[treat paths removed since given tree-ish as still present]: :__git_tree_ishs' \
+    '(-s --stage -u --unmerged)--with-tree=[treat paths removed since given tree-ish as still present]: :__git_commits' \
     '-v[identify each files status (hmrck?)]' \
     '--full-name[force paths to be output relative to the project top directory]' \
     '--abbrev=[set minimum SHA1 display-length]: :__git_guard_number length' \
@@ -4455,7 +4455,7 @@ _git-ls-tree () {
     '--abbrev=[set minimum SHA1 display-length]: :__git_guard_number length' \
     '--full-name[output full path-names]' \
     '(--full-name)--full-tree[do not limit listing to current working-directory]' \
-    ': :__git_tree_ishs' \
+    ': :__git_commits' \
     '*:: :->file' && ret=0
 
   case $state in
@@ -4656,7 +4656,7 @@ _git-send-pack () {
     '--stateless-rpc[undocumented]' \
     '--helper-status[undocumented]' \
     ': :__git_any_repositories' \
-    '*: :__git_remote_references'
+    '*: :__git_references'
 }
 
 (( $+functions[_git-update-server-info] )) ||
@@ -4689,7 +4689,7 @@ _git-http-push () {
     '(   -D)-d[remove refs from remote repository]' \
     '(-d   )-D[forcefully remove refs from remote repository]' \
     ': :_urls' \
-    '*: :__git_remote_references'
+    '*: :__git_references'
 }
 
 # NOTE: git-parse-remote isn't a user command.
@@ -5579,17 +5579,6 @@ __git_blobs_and_trees_in_treeish () {
   fi
 }
 
-(( $+functions[__git_committishs] )) ||
-__git_committishs () {
-  __git_commits
-}
-
-(( $+functions[__git_revisions] )) ||
-__git_revisions () {
-  # TODO: deal with prefixes and suffixes listed in git-rev-parse
-  __git_commits $*
-}
-
 (( $+functions[__git_commits2] )) ||
 __git_commits2 () {
   compset -P '\\\^'
@@ -5612,16 +5601,6 @@ __git_commit_ranges2 () {
   _alternative \
     'commits::__git_commits2' \
     'ranges::__git_commit_ranges'
-}
-
-(( $+functions[__git_trees] )) ||
-__git_trees () {
-  __git_objects
-}
-
-(( $+functions[__git_tree_ishs] )) ||
-__git_tree_ishs () {
-  __git_commits
 }
 
 (( $+functions[__git_objects] )) ||
@@ -5704,11 +5683,6 @@ __git_references () {
   fi
 
   _wanted references expl 'references' compadd - $_git_refs_cache
-}
-
-(( $+functions[__git_remote_references] )) ||
-__git_remote_references () {
-  __git_references
 }
 
 (( $+functions[__git_notes_refs] )) ||
