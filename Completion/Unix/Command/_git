@@ -5706,19 +5706,6 @@ __git_references () {
   _wanted references expl 'references' compadd - $_git_refs_cache
 }
 
-(( $+functions[__git_local_references] )) ||
-__git_local_references () {
-  local expl
-
-  if [[ $_git_local_refs_cache_pwd != $PWD ]]; then
-    _git_local_refs_cache=(${${${(f)"$(_call_program references git ls-remote ./. 2>/dev/null)"}#*$'\t'}#refs/})
-    __git_command_successful $pipestatus || return 1
-    _git_local_refs_cache_pwd=$PWD
-  fi
-
-  _wanted references expl 'references' compadd - $_git_local_refs_cache
-}
-
 (( $+functions[__git_remote_references] )) ||
 __git_remote_references () {
   __git_references
@@ -5807,11 +5794,6 @@ __git_cached_files () {
   __git_files --cached cached-files 'cached file' $*
 }
 
-(( $+functions[__git_deleted_files] )) ||
-__git_deleted_files () {
-  __git_files --deleted deleted-files 'deleted file' $*
-}
-
 (( $+functions[__git_modified_files] )) ||
 __git_modified_files () {
   __git_files --modified modified-files 'modified file' $*
@@ -5822,24 +5804,9 @@ __git_other_files () {
   __git_files --others untracked-files 'untracked file' $*
 }
 
-(( $+functions[__git_ignored_cached_files] )) ||
-__git_ignored_cached_files () {
-  __git_files --ignored --cached ignored-cached-files 'ignored cached file' $*
-}
-
 (( $+functions[__git_ignored_other_files] )) ||
 __git_ignored_other_files () {
   __git_files --ignored --others ignored-untracked-files 'ignored untracked file' $*
-}
-
-(( $+functions[__git_unmerged_files] )) ||
-__git_unmerged_files () {
-  __git_files --unmerged unmerged-files 'unmerged file' $*
-}
-
-(( $+functions[__git_killed_files] )) ||
-__git_killed_files () {
-  __git_files --killed killed-files 'killed file' $*
 }
 
 (( $+functions[__git_changed-in-index_files] )) ||
@@ -5911,13 +5878,6 @@ __git_remote_repositories () {
   else
     _ssh_hosts -S:
   fi
-}
-
-(( $+functions[__git_repositories] )) ||
-__git_repositories () {
-  _alternative \
-    'local-repositories::__git_local_repositories' \
-    'remote-repositories::__git_remote_repositories'
 }
 
 (( $+functions[__git_local_repositories] )) ||
@@ -5994,11 +5954,6 @@ __git_guard_bytes () {
 __git_datetimes () {
   # TODO: Use this in more places.
   _guard '*' 'time specification'
-}
-
-(( $+functions[__git_stages] )) ||
-__git_stages () {
-  __git_guard $* '[[:digit:]]#' 'stage'
 }
 
 (( $+functions[__git_svn_revision_numbers] )) ||
